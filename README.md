@@ -17,3 +17,7 @@
 ## Aplikasi Web Sistem Informasi Manajemen Kinerja Pegawai
 
 Aplikasi berbasis web yang berfungsi untuk memanage Kinerja Pegawai dari suatu Instansi / Organisasi. WebApp ini menggunakan Laravel, Bootstrap dan lainnya untuk bahan membuatnya.
+
+## Roles
+
+1. Ihza : PM & Backend Developer
