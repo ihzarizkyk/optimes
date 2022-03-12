@@ -23,4 +23,4 @@ Aplikasi berbasis web yang berfungsi untuk memanage Kinerja Pegawai dari suatu I
 1. Ihza : PM & Backend Developer
 2. Juan : UI/UX & Frontend Developer
 3. Dimas : Analyst & DEV
-4. Dimas : Analyst & DEV
+4. Dhiki : Analyst & DEV
