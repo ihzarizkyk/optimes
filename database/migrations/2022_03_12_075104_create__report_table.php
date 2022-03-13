@@ -13,10 +13,10 @@ class CreateReportTable extends Migration
      */
     public function up()
     {
-        Schema::create('_report', function (Blueprint $table) {
+        Schema::create('report', function (Blueprint $table) {
             $table->id();
-            $table->integer('user_id');
-            $table->integer('score');
+            $table->integer('user_id')->unsigned()->nullable();
+            $table->integer('score')->nullable();
             $table->timestamps();
         });
     }
