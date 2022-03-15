@@ -14,9 +14,9 @@
 3. Dhiki Sidik Sayoga, 1203210004
 4. Dimas Ekariyan Saputro, 1203210077
 
-## Aplikasi Web Sistem Informasi Manajemen Kinerja Pegawai
+## Metlog: Aplikasi Web Sistem Informasi Manajemen Kinerja Pegawai
 
-Aplikasi berbasis web yang berfungsi untuk memanage Kinerja Pegawai dari suatu Instansi / Organisasi. WebApp ini menggunakan Laravel, Bootstrap dan lainnya untuk bahan membuatnya.
+Metlog adalah aplikasi berbasis web yang berfungsi untuk memanage Kinerja Pegawai dari suatu Instansi / Organisasi. WebApp ini menggunakan Laravel, Bootstrap dan lainnya untuk bahan membuatnya.
 
 ## Roles
 
