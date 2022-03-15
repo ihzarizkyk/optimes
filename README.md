@@ -24,3 +24,7 @@ Metlog adalah aplikasi berbasis web yang berfungsi untuk memanage Kinerja Pegawa
 2. Juan : UI/UX & Frontend Developer
 3. Dimas : Analyst & Backend Developer
 4. Dhiki : Analyst & Backend Developer
+
+## Saluran Komunikasi Tim
+
+**Github Discussion:** [github.com/ihzarizkyk/optimes/discussions](https://github.com/ihzarizkyk/optimes/discussions)
