@@ -20,7 +20,7 @@
       <div class="navbar-nav">
         <a class="nav-link active" aria-current="page" href="#">Home</a>
         <a class="nav-link active" href="#">About</a>
-        <a class="nav-link active" href="#">Sign In</a>
+        <a class="nav-link active" href="/auth/signin">Sign In</a>
       </div>
     </div>
   </div>

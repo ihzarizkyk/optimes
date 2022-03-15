@@ -16,40 +16,27 @@
 			<div class="card">
 				<div class="card-body">
 					<h2 class="fs-2 text-center">
-						Sign Up - Metlog
+						Sign In - Metlog
 					</h2>
-					<form action="#" class="form">
+					<form action="/auth/postsignin" method="POST" class="form">
+						@csrf
 						<div class="mb-3">
-							<label for="username" class="name">
-								<b>Name</b>
-							</label>
-							<br>
-							<input type="text" name="name" class="form-control">
-						</div>
-						<div class="mb-3">
-							<label for="username" class="name">
-								<b>Email</b>
-							</label>
-							<br>
-							<input type="text" name="email" class="form-control">
-						</div>
-						<div class="mb-3">
-							<label for="username" class="name">
+							<label for="username">
 								<b>Username</b>
 							</label>
 							<br>
 							<input type="text" name="username" class="form-control">
 						</div>
 						<div class="mb-3">
-							<label for="username" class="name">
+							<label for="password">
 								<b>Password</b>
 							</label>
 							<br>
 							<input type="password" name="password" class="form-control">
 						</div>
-						<input type="submit" name="signIn" class="btn btn-primary mb-3" value="Sign Up">
+						<input type="submit" name="signIn" class="btn btn-primary mb-3" value="Sign In">
 						<br>
-						<p class="text-secondary">Already have an account? <a href="#">Sign In</a></p>
+						<p class="text-secondary">Don't have an account? <a href="/auth/signup">Sign Up</a></p>
 					</form>
 				</div>
 			</div>
