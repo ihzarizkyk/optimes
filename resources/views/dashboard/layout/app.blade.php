@@ -12,11 +12,11 @@
 
 @yield('sidebar')
 <div class="sidebar">
-	<a class="active" id="#">Dashboard</a>
+	<a class="active" id="#" href="/dashboard">Dashboard</a>
 	<a id="#">Profile</a>
 	<a id="#">Task</a>
 	<a id="#">Report</a>
-	<a id="#">Sign Out</a>
+	<a id="#" href="/auth/signout">Sign Out</a>
 </div>
 
 <div class="content">

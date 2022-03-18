@@ -28,9 +28,9 @@ class LoginController extends Controller
 
         if(Auth::attempt(["username" => $req->username,"password" => $req->password]))
         {
-            return true;
+            return redirect("/dashboard");
         }else{
-            return false;
+            return back();
         }
 
     }
