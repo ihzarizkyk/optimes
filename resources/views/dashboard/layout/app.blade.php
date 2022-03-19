@@ -13,7 +13,7 @@
 @yield('sidebar')
 <div class="sidebar">
 	<a class="active" id="#" href="/dashboard">Dashboard</a>
-	<a id="#">Profile</a>
+	<a id="#" href="{{ route('profile') }}">Profile</a>
 	<a id="#">Task</a>
 	<a id="#">Report</a>
 	<a id="#" href="/auth/signout">Sign Out</a>

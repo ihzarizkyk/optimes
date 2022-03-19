@@ -17,3 +17,5 @@ Route::post("/auth/postsignup","Auth\RegisterController@postSignUp")->name("sign
 // Dashboard Routes
 
 Route::get("/dashboard","Dashboard\DashboardController@index")->name("dashboard");
+
+Route::get("/dashboard/profile","Dashboard\ProfileController@index")->name("profile");

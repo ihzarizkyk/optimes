@@ -11,28 +11,28 @@
 	<!-- use grid row column 3 with 3 card -->
 
 	<!-- card use header and body -->
-	<div class="row">
+	<div class="row mt-3">
     	<div class="col">
-      	<div class="card" style="width: 26rem;">
+      	<div class="card">
   		<div class="card-body">
-    		<h1 class="card-title">Card 1</h1>
-    		<h4 class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</h4>
+    		<h1 class="card-title">Task</h1>
+    		<h4 class="card-text">0</h4>
   		</div>
 	</div>
     	</div>
     		<div class="col">
-      			<div class="card" style="width: 26rem;">
-  		<div class="card-body">
-    		<h1 class="card-title">Card 2</h1>
-    		<h4 class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</h4>
+      		<div class="card">
+  			<div class="card-body">
+    		<h1 class="card-title">Report</h1>
+    		<h4 class="card-text">0</h4>
   		</div>
 	</div>
     		</div>
     	<div class="col">
-      		<div class="card" style="width: 26rem;">
+      		<div class="card">
   		<div class="card-body">
-    		<h1 class="card-title">Card 3</h1>
-    		<h4 class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</h4>
+    		<h1 class="card-title">Recently Grade</h1>
+    		<h4 class="card-text">A</h4>
   		</div>
 	</div>
    		</div>
