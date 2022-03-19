@@ -35,6 +35,7 @@
 							<input type="password" name="password" class="form-control">
 						</div>
 						<input type="submit" name="signIn" class="btn btn-primary mb-3" value="Sign In">
+						<a href="/" class="btn btn-danger mb-3">Back</a>
 						<br>
 						<p class="text-secondary">Don't have an account? <a href="/auth/signup">Sign Up</a></p>
 					</form>

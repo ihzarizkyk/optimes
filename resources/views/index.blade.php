@@ -5,6 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+	<link rel="stylesheet" href="{{ asset('css/home.css') }}">
 	<title>Metlog</title>
 </head>
 <body>
@@ -28,7 +29,7 @@
 </div>
 
 <div class="container-100%">
-	<div class="row bg-info mb-3">
+	<div class="row mb-3" id="jumbotron">
 		<div class="col-12 d-flex justify-content-center px-4 py-5">
 			<h2 class="fs-2 mb-2 fw-bold">
 				Metlog for measure employee performance
