@@ -7,5 +7,13 @@ use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
-    //
+    /**
+     * protect all method on this controller using auth middeware
+     * 
+     * **/
+    public function __construct()
+    {
+        return $this->middleware(["auth"]);
+    }
+
 }
