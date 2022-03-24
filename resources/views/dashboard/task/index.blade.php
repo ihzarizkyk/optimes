@@ -2,13 +2,17 @@
 @section("title","Dashboard - Task Metlog")
 @section("content")
 	<div class="container">
+
+	<a href="{{route('task.new')}}" class="btn btn-success mt-2">
+		Add Task
+	</a>		
 		<!-- start -->
 		<!--Tabel-->
 		<div class="row mt-5">
 			<div class="col">
-				<div class="table-responsive">
-					<table class="table table-hover">
-						<thead class="bg-dark text-white">
+				<!-- <div class="table-responsive"> -->
+					<table class="table table-striped" id="task">
+						<thead>
 							<tr>
 								<th>No</th>
 								<th>Task</th>
@@ -34,7 +38,7 @@
 							</tr>
 						</tbody>
 					</table>
-				</div>
+				<!-- </div> -->
 			</div>
 		</div>
 		<!--End Table-->
@@ -43,9 +47,15 @@
 		<!-- end -->
 
 	</div>
+
 @endsection
 @section('script')
-
 	<!-- taruh skrip datatable disini -->
+	<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
 
+	<script>
+		$(document).ready(function() {
+		    $('#task').DataTable();
+		} );
+	</script>
 @endsection

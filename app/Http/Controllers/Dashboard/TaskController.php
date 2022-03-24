@@ -23,7 +23,7 @@ class TaskController extends Controller
      */
     public function index()
     {
-        //
+        return view("dashboard.task.index");
     }
 
     /**
@@ -33,7 +33,7 @@ class TaskController extends Controller
      */
     public function create()
     {
-        //
+        return view("dashboard.task.create");
     }
 
     /**

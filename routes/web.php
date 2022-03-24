@@ -19,3 +19,7 @@ Route::post("/auth/postsignup","Auth\RegisterController@postSignUp")->name("sign
 Route::get("/dashboard","Dashboard\DashboardController@index")->name("dashboard");
 
 Route::get("/dashboard/profile","Dashboard\ProfileController@index")->name("profile");
+
+Route::get("/dashboard/task","Dashboard\TaskController@index")->name("task");
+
+Route::get("/dashboard/task/create","Dashboard\TaskController@create")->name("task.new");

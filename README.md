@@ -22,8 +22,8 @@ Metlog adalah aplikasi berbasis web yang berfungsi untuk memanage Kinerja Pegawa
 
 1. Ihza : PM & Fullstack Developer
 2. Juan : UI/UX & Frontend Developer
-3. Dimas : Analyst & Backend Developer
-4. Dhiki : Analyst & Backend Developer
+3. Dimas : Analyst & Fullstack Developer
+4. Dhiki : Analyst & Fullstack Developer
 
 ## Saluran Komunikasi Tim
 
