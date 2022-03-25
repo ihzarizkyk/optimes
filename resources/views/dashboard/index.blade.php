@@ -13,28 +13,28 @@
 	<!-- card use header and body -->
 	<div class="row mt-3">
     	<div class="col">
-      	<div class="card">
-  		<div class="card-body">
-    		<h1 class="card-title">Task</h1>
-    		<h4 class="card-text">0</h4>
-  		</div>
-	</div>
-    	</div>
-    		<div class="col">
       		<div class="card">
-  			<div class="card-body">
-    		<h1 class="card-title">Report</h1>
-    		<h4 class="card-text">0</h4>
-  		</div>
-	</div>
-    		</div>
+  				<div class="card-body">
+    				<h1 class="card-title">Task</h1>
+    				<h4 class="card-text">0</h4>
+  				</div>
+			</div>
+    	</div>
     	<div class="col">
       		<div class="card">
-  		<div class="card-body">
-    		<h1 class="card-title">Recently Grade</h1>
-    		<h4 class="card-text">A</h4>
-  		</div>
-	</div>
+  				<div class="card-body">
+    				<h1 class="card-title">Report</h1>
+    				<h4 class="card-text">0</h4>
+  				</div>
+			</div>
+    	</div>
+    	<div class="col">
+      		<div class="card">
+  				<div class="card-body">
+    				<h1 class="card-title">Recently Grade</h1>
+    				<h4 class="card-text">A</h4>
+  				</div>
+			</div>
    		</div>
   	</div>
 	
