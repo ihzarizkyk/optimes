@@ -14,11 +14,11 @@
     					<input type="text" class="form-control">
     				</div>
     				<div class="mb-3">
-    					<label>Description</label>
+    					<label for="Description" class="form-label">Description</label>
     					<input type="text" class="form-control">
     				</div>
     				<div class="mb-3">
-    					<label>Author</label>
+    					<label for="Author" class="form-label">Author</label>
     					<input type="text" class="form-control">
     				</div>
     			</form>
