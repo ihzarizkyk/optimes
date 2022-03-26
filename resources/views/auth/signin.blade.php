@@ -19,6 +19,9 @@
 					<h2 class="fs-2 text-center">
 						Sign In - Metlog
 					</h2>
+					<div class="text-center mb-3">
+						<img src="{{asset('image/logo/fullfill64.png')}}" alt="logo">
+					</div>
 					<form action="/auth/postsignin" method="POST" class="form">
 						@csrf
 						<div class="mb-3">
