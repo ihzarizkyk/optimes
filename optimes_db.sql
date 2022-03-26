@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 19 Mar 2022 pada 10.48
+-- Waktu pembuatan: 26 Mar 2022 pada 13.16
 -- Versi server: 10.4.8-MariaDB
 -- Versi PHP: 7.2.24
 
@@ -60,7 +60,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (3, '2019_08_19_000000_create_failed_jobs_table', 1),
 (4, '2019_12_14_000001_create_personal_access_tokens_table', 1),
 (5, '2022_03_12_052856_create_scores_table', 1),
-(6, '2022_03_12_075104_create__report_table', 1);
+(6, '2022_03_12_075104_create__report_table', 1),
+(7, '2022_03_26_110937_create_tasks_table', 1);
 
 -- --------------------------------------------------------
 
@@ -124,6 +125,28 @@ CREATE TABLE `scores` (
 -- --------------------------------------------------------
 
 --
+-- Struktur dari tabel `task`
+--
+
+CREATE TABLE `task` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `user_id` int(10) UNSIGNED DEFAULT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data untuk tabel `task`
+--
+
+INSERT INTO `task` (`id`, `user_id`, `name`, `description`, `created_at`, `updated_at`) VALUES
+(1, 1, 'Task 1112', 'lorem ipsum sit dolor amet', NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
 -- Struktur dari tabel `users`
 --
 
@@ -131,6 +154,7 @@ CREATE TABLE `users` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `username` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `role` enum('employee','manager','admin') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'employee',
   `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `email_verified_at` timestamp NULL DEFAULT NULL,
   `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -143,9 +167,8 @@ CREATE TABLE `users` (
 -- Dumping data untuk tabel `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `username`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'Mochammad Ihza Rizky Karim', 'ihzarizkyk', 'ihza.rizky.1@facebook.com', NULL, '$2y$10$FYhD63CMx1dwA/DYGTCYbOXx5KFERE61uWBCwp7/y/lbzuyCeJRcK', NULL, NULL, NULL),
-(2, 'John Doe', 'johns', 'john@gmail.com', NULL, '$2y$10$nSrdF5BxGOctAM5sRdvSfe4fPKU1aVLLGZkMmyasDW/2a56xFg0Na', NULL, NULL, NULL);
+INSERT INTO `users` (`id`, `name`, `username`, `role`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
+(1, 'IhzaRizky', 'ihzarz', 'admin', 'ihza@email.com', NULL, '$2y$10$P0KT/LngiFWr7LykimBeiewvewDEvxq4y0vcgMgIoK0ECQ.sy3aOO', NULL, NULL, NULL);
 
 --
 -- Indexes for dumped tables
@@ -191,6 +214,12 @@ ALTER TABLE `scores`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indeks untuk tabel `task`
+--
+ALTER TABLE `task`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indeks untuk tabel `users`
 --
 ALTER TABLE `users`
@@ -211,7 +240,7 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT untuk tabel `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT untuk tabel `personal_access_tokens`
@@ -232,10 +261,16 @@ ALTER TABLE `scores`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT untuk tabel `task`
+--
+ALTER TABLE `task`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT untuk tabel `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

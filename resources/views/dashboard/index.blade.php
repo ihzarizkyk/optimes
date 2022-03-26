@@ -16,7 +16,7 @@
       		<div class="card">
   				<div class="card-body">
     				<h1 class="card-title">Task</h1>
-    				<h4 class="card-text">0</h4>
+    				<h4 class="card-text">{{Auth::user()->task->count()}}</h4>
   				</div>
 			</div>
     	</div>

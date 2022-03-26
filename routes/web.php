@@ -23,3 +23,7 @@ Route::get("/dashboard/profile","Dashboard\ProfileController@index")->name("prof
 Route::get("/dashboard/task","Dashboard\TaskController@index")->name("task");
 
 Route::get("/dashboard/task/create","Dashboard\TaskController@create")->name("task.new");
+Route::post("/dashboard/task/post","Dashboard\TaskController@store")->name("task.store");
+Route::get("/dashboard/task/{id}/delete","Dashboard\TaskController@destroy")->name("task.delete");
+Route::get("/dashboard/task/{id}/edit","Dashboard\TaskController@edit")->name("task.edit");
+Route::post("/dashboard/task/update","Dashboard\TaskController@update")->name("task.update");

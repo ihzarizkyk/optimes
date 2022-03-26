@@ -4,6 +4,10 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\User;
+use App\Models\Task;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
@@ -23,7 +27,9 @@ class TaskController extends Controller
      */
     public function index()
     {
-        return view("dashboard.task.index");
+        $task = Auth::user()->task()->get();
+        $tasks = Task::with("user")->get();
+        return view("dashboard.task.index",compact("task","tasks"));
     }
 
     /**
@@ -42,9 +48,18 @@ class TaskController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $req)
     {
-        //
+        $req->validate([
+            "name" => "required",
+            "description" => "required"]);
+
+        DB::table("task")->insert([
+            "name" => $req->name,
+            "description" => $req->description,
+            "user_id" => Auth::Id()]);
+
+        return redirect("/dashboard/task");
     }
 
     /**
@@ -66,7 +81,14 @@ class TaskController extends Controller
      */
     public function edit($id)
     {
-        //
+        $task = Task::find($id);
+        if(Auth::user()->id == $task->user_id)
+        {
+            return view("dashboard.task.edit",compact("task"));
+        }else{
+            return abort(403);
+        }
+        
     }
 
     /**
@@ -76,9 +98,17 @@ class TaskController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $req)
     {
-        //
+        $req->validate([
+            "name" => "required",
+            "description" => "required"]);
+
+        DB::table("task")->where("id",$req->id)->update([
+            "name" => $req->name,
+            "description" => $req->description]);
+
+        return redirect("/dashboard/task");
     }
 
     /**
@@ -89,6 +119,13 @@ class TaskController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $task = Task::find($id);
+        if(Auth::user()->id == $task->user_id)
+        {
+            $task->delete();
+            return back();
+        }else{
+            return abort(403);
+        }
     }
 }

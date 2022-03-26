@@ -6,17 +6,19 @@
 		<!-- Buat card disini dengan isian form didalamnya dan inputannya: name, description-->
 
 		<!-- start -->
-		<div class="card">
+		<div class="card mt-3">
   			<div class="card-body">
-  				<form>
+  				<form action="{{ route('task.store') }}" method="POST">
+  					@csrf
     				<div class="mb-3">
-    					<label for="Name" class="form-label">Name</label>
-    					<input type="text" class="form-control">
+    					<label for="Name" class="form-label"><b>Name</b></label>
+    					<input type="text" class="form-control" name="name">
     				</div>
     				<div class="mb-3">
-    					<label for="Description" class="form-label">Description</label>
-    					<input type="text" class="form-control">
+    					<label for="Description" class="form-label"><b>Description</b></label>
+    					<textarea class="form-control" name="description"></textarea>
     				</div>
+    				<input class="btn btn-md btn-success mb-2" type="submit" value="Create">
     			</form>
   			</div>
 		</div>
