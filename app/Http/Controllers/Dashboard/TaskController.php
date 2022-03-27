@@ -81,7 +81,7 @@ class TaskController extends Controller
      */
     public function edit($id)
     {
-        $task = Task::find($id);
+        $task = Task::findOrfail($id);
         if(Auth::user()->id == $task->user_id)
         {
             return view("dashboard.task.edit",compact("task"));
@@ -119,7 +119,7 @@ class TaskController extends Controller
      */
     public function destroy($id)
     {
-        $task = Task::find($id);
+        $task = Task::findOrfail($id);
         if(Auth::user()->id == $task->user_id)
         {
             $task->delete();

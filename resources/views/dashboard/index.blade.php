@@ -12,15 +12,20 @@
 
 	<!-- card use header and body -->
 	<div class="row mt-3">
-    	<div class="col">
+    	<div class="col mb-2">
       		<div class="card">
   				<div class="card-body">
     				<h1 class="card-title">Task</h1>
-    				<h4 class="card-text">{{Auth::user()->task->count()}}</h4>
+    				<h4 class="card-text">@if($taskCount->count() == 0)
+    				0
+    				@else
+    				{{$taskCount->count()}}
+    				@endif
+    				</h4>
   				</div>
 			</div>
     	</div>
-    	<div class="col">
+    	<div class="col mb-2">
       		<div class="card">
   				<div class="card-body">
     				<h1 class="card-title">Report</h1>
@@ -28,7 +33,7 @@
   				</div>
 			</div>
     	</div>
-    	<div class="col">
+    	<div class="col mb-2">
       		<div class="card">
   				<div class="card-body">
     				<h1 class="card-title">Recently Grade</h1>
