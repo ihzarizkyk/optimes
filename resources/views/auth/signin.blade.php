@@ -7,47 +7,55 @@
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
 	<title>Sign In - Metlog</title>
+	<style>
+		.bg_img{
+		margin: 0;
+		background-image: url('{{ asset('image/signin.jpg') }}');
+		background-repeat: no-repeat;
+		background-size: cover;
+		height: 100vh;
+		position: relative;
+		}
+		.logo{
+			width: 40px;
+			height : auto;
+		}
+	</style>
 </head>
 <body>
 
-<div class="container-fluid bg-primary px-5 py-5 mb-4">
-	
-	<div class="row d-flex justify-center-content">
-		<div class="col-md-7">
-			<div class="card">
-				<div class="card-body">
-					<h2 class="fs-2 text-center">
-						Sign In - Metlog
-					</h2>
-					<div class="text-center mb-3">
-						<img src="{{asset('image/logo/fullfill64.png')}}" alt="logo">
-					</div>
-					<form action="/auth/postsignin" method="POST" class="form">
+<div class="d-lg-flex half">
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-lg-12 col-sm-12">
+				<div class="row align-items-center justify-content-center no-gutters">
+					<div class="col-sm-6 mr-5">
+						<img src="{{asset('image/logo/fullfill64.png')}}" class="logo" alt="logo">
+						<h2>Sign In</h2>
+						<p class="mb-5">Selamat datang kembali, silahkan login terlebih dahulu</p>
+						<form action="/auth/postsignin" method="POST" class="form">
 						@csrf
-						<div class="mb-3">
-							<label for="username">
-								<b>Username</b>
-							</label>
-							<br>
-							<input type="text" name="username" class="form-control">
-						</div>
-						<div class="mb-3">
-							<label for="password">
-								<b>Password</b>
-							</label>
-							<br>
-							<input type="password" name="password" class="form-control">
-						</div>
-						<input type="submit" name="signIn" class="btn btn-primary mb-3" value="Sign In">
-						<a href="/" class="btn btn-danger mb-3">Back</a>
-						<br>
-						<p class="text-secondary">Don't have an account? <a href="/auth/signup">Sign Up</a></p>
-					</form>
+							<div class="form-group mb-2">
+								<label for="username">Username</label>
+								<input type="text" name="username" class="form-control" placeholder="cth. john123">
+								<small id="emailHelp" class="form-text text-muted">Data yang dimasukan tidak akan disebarluaskan</small>
+							</div>
+							<div class="form-group mb-5">
+								<label for="password">Password</label>
+								<input type="password" name="password" class="form-control" placeholder="password">
+							</div>
+							<input type="submit" name="signIn" class="btn btn-primary mb-3" value="Masuk">
+							<a href="/" class="btn btn-outline-danger mb-3">Kembali</a>
+							<p class="text-secondary">Belum punya akun? <a href="/auth/signup">Daftar dulu</a></p>	
+						</form>
+					</div>
+					<div class="col-md-5 d-none d-lg-inline-block">
+                        <div class="bg_img rounded-right" alt="">
+                    </div>
 				</div>
 			</div>
 		</div>
 	</div>
-
 </div>
 
 
