@@ -55,7 +55,7 @@
 					<h1 class="fs-1">
 						<i class="bi bi-list-task"></i>
 					</h1>
-					<h3>Assign Task</h3>
+					<h3>Create / Assign Task</h3>
 				</div>
 			</div>
 		</div>
