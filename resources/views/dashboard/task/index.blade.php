@@ -30,8 +30,11 @@
 							<tr>
 								<td>{{ $loop->iteration }}</td>
 								<td>{{ $tks->name }}</td>
-								<td>{{ $tks->user->name }}</td>
+								<td>{{ $tks->grade }}</td>
+								<td>{{ $tks->grader_name }}</td>
+								<td>{{ $tks->user->name}}</td>
 								<td>{{ date('d F Y',strtotime($tks->created_at))?? 'null' }}</td>
+								<td>{{ date('d F Y',strtotime($tks->updated_at))?? 'null' }}</td>
 								<td>
 									<a href="/dashboard/task/{{$tks->id}}/edit" class="btn btn-warning">Edit</a>
 									<a href="/dashboard/task/{{$tks->id}}/delete" class="btn btn-danger">Delete</a>

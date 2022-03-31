@@ -11,8 +11,9 @@
 
 	<div class="card mt-3 mb-2">
   		<div class="card-body">
-    		<h1 class="card-title">Profile: {{Auth::user()->name}}</h1>
-    		<h4 class="card-text">usr: {{Auth::user()->username}}</h4>
+    		<h1 class="card-title"><b>Profile:</b> {{Auth::user()->name}}</h1>
+    		<h4 class="card-text"><b>Username:</b>{{Auth::user()->username}}</h4>
+    		<h4><b>Role:</b>{{Auth::user()->role}}</h4>
   		</div>
 	</div>
 </div>

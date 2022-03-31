@@ -62,7 +62,7 @@ class EmployeeController extends Controller
     {
         if(Auth::user()->role == "admin")
         {
-            DB::table("user")->where("id",$req->id)->update([
+            DB::table("users")->where("id",$req->id)->update([
                 "role" => "admin"]);
             return back();
         }else{
@@ -80,7 +80,7 @@ class EmployeeController extends Controller
     {
         if(Auth::user()->role == "admin")
         {
-            DB::table("user")->where("id",$req->id)->update([
+            DB::table("users")->where("id",$req->id)->update([
                 "role" => "manager"]);
             return back();            
         }else{
@@ -98,7 +98,7 @@ class EmployeeController extends Controller
     {
         if(Auth::user()->role == "admin")
         {
-            DB::table("user")->where("id",$req->id)->update([
+            DB::table("users")->where("id",$req->id)->update([
                 "role" => "employee"]);
             return back();
         }else{

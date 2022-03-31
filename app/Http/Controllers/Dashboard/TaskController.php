@@ -123,7 +123,7 @@ class TaskController extends Controller
     public function destroy($id)
     {
         $task = Task::findOrfail($id);
-        if(Auth::user()->id == $task->user_id)
+        if((Auth::user()->id == $task->user_id) || (Auth::user()->role == "admin"))
         {
             $task->delete();
             return back();

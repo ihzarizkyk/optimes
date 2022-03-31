@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 26 Mar 2022 pada 13.16
+-- Waktu pembuatan: 31 Mar 2022 pada 11.10
 -- Versi server: 10.4.8-MariaDB
 -- Versi PHP: 7.2.24
 
@@ -133,6 +133,9 @@ CREATE TABLE `task` (
   `user_id` int(10) UNSIGNED DEFAULT NULL,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `description` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `grade` int(11) DEFAULT 0,
+  `grader_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `grader_id` int(10) UNSIGNED DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -141,8 +144,8 @@ CREATE TABLE `task` (
 -- Dumping data untuk tabel `task`
 --
 
-INSERT INTO `task` (`id`, `user_id`, `name`, `description`, `created_at`, `updated_at`) VALUES
-(1, 1, 'Task 1112', 'lorem ipsum sit dolor amet', NULL, NULL);
+INSERT INTO `task` (`id`, `user_id`, `name`, `description`, `grade`, `grader_name`, `grader_id`, `created_at`, `updated_at`) VALUES
+(1, 1, 'Task 1', 'lorem ipsum lorem ipsm', 100, 'budisas', 2, '2022-03-30 16:18:08', '2022-03-30 16:20:37');
 
 -- --------------------------------------------------------
 
@@ -168,7 +171,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `username`, `role`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'IhzaRizky', 'ihzarz', 'admin', 'ihza@email.com', NULL, '$2y$10$P0KT/LngiFWr7LykimBeiewvewDEvxq4y0vcgMgIoK0ECQ.sy3aOO', NULL, NULL, NULL);
+(1, 'John Doe', 'johnd', 'employee', 'johnd@mail.com', NULL, '$2y$10$oTgdChemY1PpasFR3FmI5OVyimg90rRQA/QFrenvn/2OYACCDFKzi', NULL, NULL, NULL),
+(2, 'budisas', 'buds1', 'manager', 'buds@mail.com', NULL, '$2y$10$ohKz785mwwYhjNsWLokPIOylmWcv/LX/Zt58pFJ6GXqUSFZMwy5Tq', NULL, NULL, NULL),
+(3, 'admin metlog 1', 'adm1', 'admin', 'admin1@mail.com', NULL, '$2y$10$.6Nh8x1EQdnw3l.ZNF/L/uGDuiPOWKlbj7RWJH6HrnHLEcYFs8sDu', NULL, NULL, NULL);
 
 --
 -- Indexes for dumped tables
@@ -270,7 +275,7 @@ ALTER TABLE `task`
 -- AUTO_INCREMENT untuk tabel `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
