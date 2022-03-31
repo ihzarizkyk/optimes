@@ -16,8 +16,11 @@
 <div class="sidebar">
 	<a class="{{ Request::is('/dashboard/*') ? 'active' : '' }}" href="/dashboard">Dashboard</a>
 	<a class="{{ Request::is('/dashboard/profile/*') ? 'active' : '' }}" href="/dashboard/profile">Profile</a>
+	@if(Auth::user()->role == "admin")
+	<a class="{{ Request::is('/dashboard/user/*') ? 'active' : '' }}" href="/dashboard/user">User</a>
+	@endif
 	<a class="{{ Request::is('/dashboard/task/*') ? 'active' : '' }}" href="/dashboard/task">Task</a>
-	<a href="#">Report</a>
+	<a class="{{ Request::is('/dashboard/report/*') ? 'active' : '' }}" href="/dashboard/report">Report</a>
 	<a class="{{ Request::is('/auth/signout') ? 'active' : '' }}"href="/auth/signout">Sign Out</a>
 </div>
 

@@ -47,4 +47,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Task::class,"user_id");
     }
+
+    public function grader()
+    {
+        return $this->hasOne(Task::class,"grader_id");
+    }
 }

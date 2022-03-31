@@ -10,7 +10,7 @@
 	<style>
 		.bg_img{
 		margin: 0;
-		background-image: url('{{ asset('image/signin.jpg') }}');
+		background-image: url("{{ asset('image/Signin.jpg') }}");
 		background-repeat: no-repeat;
 		background-size: cover;
 		height: 100vh;

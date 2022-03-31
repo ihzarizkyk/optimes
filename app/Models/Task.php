@@ -16,4 +16,9 @@ class Task extends Model
     {
         return $this->belongsTo(User::class,"id");
     }
+
+    public function user_grader()
+    {
+        return $this->belongsTo(User::class,"id");
+    }
 }

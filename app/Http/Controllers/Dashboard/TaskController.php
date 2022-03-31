@@ -29,7 +29,9 @@ class TaskController extends Controller
     {
         $task = Auth::user()->task()->get();
         $tasks = Task::with("user")->get();
-        return view("dashboard.task.index",compact("task","tasks"));
+        $grader = Task::with("user_grader")->get();
+        return view("dashboard.task.index",compact("task","tasks","grader"));
+
     }
 
     /**
@@ -57,7 +59,8 @@ class TaskController extends Controller
         DB::table("task")->insert([
             "name" => $req->name,
             "description" => $req->description,
-            "user_id" => Auth::Id()]);
+            "user_id" => Auth::Id(),
+            "created_at" => now()]);
 
         return redirect("/dashboard/task");
     }

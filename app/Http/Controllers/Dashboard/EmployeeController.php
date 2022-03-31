@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class EmployeeController extends Controller
 {
@@ -23,7 +26,13 @@ class EmployeeController extends Controller
      * **/   
     public function index()
     {
-        //
+        if(Auth::user()->role == "admin")
+        {
+            $user = User::all();
+            return view("dashboard.employee.index",compact("user"));
+        }else{
+            return abort(403);
+        }
     }
 
     /**
@@ -33,7 +42,15 @@ class EmployeeController extends Controller
      * **/
     public function delete($id)
     {
-        //
+        $user = User::findOrfail($id);
+        if(Auth::user()->role == "admin")
+        {
+            $user->delete();
+            return back();  
+        }else{
+            return abort(403);
+        }
+
     }
 
     /**
@@ -43,7 +60,15 @@ class EmployeeController extends Controller
      * **/
     public function admin(Request $req)
     {
-        //
+        if(Auth::user()->role == "admin")
+        {
+            DB::table("user")->where("id",$req->id)->update([
+                "role" => "admin"]);
+            return back();
+        }else{
+            return abort(403);
+        }
+
     }
 
     /**
@@ -53,7 +78,15 @@ class EmployeeController extends Controller
      * **/
     public function manager(Request $req)
     {
-        //
+        if(Auth::user()->role == "admin")
+        {
+            DB::table("user")->where("id",$req->id)->update([
+                "role" => "manager"]);
+            return back();            
+        }else{
+            return abort(403);
+        }
+
     }
 
     /**
@@ -63,16 +96,14 @@ class EmployeeController extends Controller
      * **/
     public function employee(Request $req)
     {
-        //
+        if(Auth::user()->role == "admin")
+        {
+            DB::table("user")->where("id",$req->id)->update([
+                "role" => "employee"]);
+            return back();
+        }else{
+            return abort(403);
+        }
     }
 
-    /**
-     * Suspend User (can login, but can't access all feature)
-     * 
-     * GET METHOD
-     * **/
-    public function suspend(Request $req)
-    {
-        //
-    }
 }

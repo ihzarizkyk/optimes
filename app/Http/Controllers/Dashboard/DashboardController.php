@@ -17,6 +17,7 @@ class DashboardController extends Controller
     public function index()
     {
         $taskCount = Auth::user()->task()->get();
-        return view("dashboard.index",compact('taskCount'));
+        $score = Auth::user()->task()->sum("grade");
+        return view("dashboard.index",compact('taskCount','score'));
     }
 }

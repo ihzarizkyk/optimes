@@ -28,16 +28,25 @@
     	<div class="col mb-2">
       		<div class="card">
   				<div class="card-body">
-    				<h1 class="card-title">Report</h1>
-    				<h4 class="card-text">0</h4>
+    				<h1 class="card-title">Recently Score</h1>
+    				<h4 class="card-text">{{$score}}</h4>
   				</div>
 			</div>
-    	</div>
+   		</div>
+
     	<div class="col mb-2">
       		<div class="card">
   				<div class="card-body">
     				<h1 class="card-title">Recently Grade</h1>
-    				<h4 class="card-text">A</h4>
+    				<h4 class="card-text">
+    					@if(($score / $taskCount->count()))
+    					A
+    					@elseif(($score / $taskCount->count()) <= $score)
+    					B
+    					@elseif(($score / $taskCount->count()) < $score)
+    					C
+    					@endif
+    				</h4>
   				</div>
 			</div>
    		</div>
