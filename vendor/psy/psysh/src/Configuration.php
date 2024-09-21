@@ -3,7 +3,7 @@
 /*
  * This file is part of Psy Shell.
  *
- * (c) 2012-2022 Justin Hileman
+ * (c) 2012-2023 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -16,6 +16,7 @@ use Psy\Exception\RuntimeException;
 use Psy\ExecutionLoop\ProcessForker;
 use Psy\Output\OutputPager;
 use Psy\Output\ShellOutput;
+use Psy\Output\Theme;
 use Psy\TabCompletion\AutoCompleter;
 use Psy\VarDumper\Presenter;
 use Psy\VersionUpdater\Checker;
@@ -66,6 +67,8 @@ class Configuration
         'requireSemicolons',
         'runtimeDir',
         'startupMessage',
+        'strictTypes',
+        'theme',
         'updateCheck',
         'useBracketedPaste',
         'usePcntl',
@@ -97,6 +100,7 @@ class Configuration
     private $pipedOutput;
     private $rawOutput = false;
     private $requireSemicolons = false;
+    private $strictTypes = false;
     private $useUnicode;
     private $useTabCompletion;
     private $newMatchers = [];
@@ -107,12 +111,16 @@ class Configuration
     private $updateCheck;
     private $startupMessage;
     private $forceArrayIndexes = false;
+    /** @deprecated */
     private $formatterStyles = [];
     private $verbosity = self::VERBOSITY_NORMAL;
     private $yolo = false;
+    /** @var Theme */
+    private $theme;
 
     // services
     private $readline;
+    /** @var ShellOutput */
     private $output;
     private $shell;
     private $cleaner;
@@ -121,6 +129,7 @@ class Configuration
     private $presenter;
     private $autoCompleter;
     private $checker;
+    /** @deprecated */
     private $prompt;
     private $configPaths;
 
@@ -140,6 +149,8 @@ class Configuration
             $this->configFile = $config['configFile'];
         } elseif (isset($_SERVER['PSYSH_CONFIG']) && $_SERVER['PSYSH_CONFIG']) {
             $this->configFile = $_SERVER['PSYSH_CONFIG'];
+        } elseif (\PHP_SAPI === 'cli-server' && ($configFile = \getenv('PSYSH_CONFIG'))) {
+            $this->configFile = $configFile;
         }
 
         // legacy baseDir option
@@ -171,8 +182,6 @@ class Configuration
      * @throws \InvalidArgumentException
      *
      * @param InputInterface $input
-     *
-     * @return self
      */
     public static function fromInput(InputInterface $input): self
     {
@@ -195,6 +204,11 @@ class Configuration
             $config->setInteractiveMode(self::INTERACTIVE_MODE_FORCED);
         } elseif (self::getOptionFromInput($input, ['no-interactive', 'no-interaction'], ['-n'])) {
             $config->setInteractiveMode(self::INTERACTIVE_MODE_DISABLED);
+        }
+
+        // Handle --compact
+        if (self::getOptionFromInput($input, ['compact'])) {
+            $config->setTheme('compact');
         }
 
         // Handle --raw-output
@@ -296,6 +310,11 @@ class Configuration
                     return self::VERBOSITY_VERY_VERBOSE;
                 case '3':
                 case 'vv': // `-vvv`
+                case 'vvv':
+                case 'vvvv':
+                case 'vvvvv':
+                case 'vvvvvv':
+                case 'vvvvvvv':
                     return self::VERBOSITY_DEBUG;
                 default: // implicitly normal, config file default wins
                     return;
@@ -346,12 +365,15 @@ class Configuration
 
             new InputOption('quiet', 'q', InputOption::VALUE_NONE, 'Shhhhhh.'),
             new InputOption('verbose', 'v|vv|vvv', InputOption::VALUE_OPTIONAL, 'Increase the verbosity of messages.', '0'),
+            new InputOption('compact', null, InputOption::VALUE_NONE, 'Run PsySH with compact output.'),
             new InputOption('interactive', 'i|a', InputOption::VALUE_NONE, 'Force PsySH to run in interactive mode.'),
             new InputOption('no-interactive', 'n', InputOption::VALUE_NONE, 'Run PsySH without interactive input. Requires input from stdin.'),
             // --interaction and --no-interaction aliases for compatibility with Symfony, Composer, etc
             new InputOption('interaction', null, InputOption::VALUE_NONE, 'Force PsySH to run in interactive mode.'),
             new InputOption('no-interaction', null, InputOption::VALUE_NONE, 'Run PsySH without interactive input. Requires input from stdin.'),
             new InputOption('raw-output', 'r', InputOption::VALUE_NONE, 'Print var_export-style return values (for non-interactive input)'),
+
+            new InputOption('self-update', 'u', InputOption::VALUE_NONE, 'Update to the latest version'),
 
             new InputOption('yolo', null, InputOption::VALUE_NONE, 'Run PsySH with minimal input validation. You probably don\'t want this.'),
         ];
@@ -523,7 +545,7 @@ class Configuration
     /**
      * Get files to be included by default at the start of each shell session.
      *
-     * @return array
+     * @return string[]
      */
     public function getDefaultIncludes(): array
     {
@@ -605,8 +627,6 @@ class Configuration
      * overridden.
      *
      * @throws RuntimeException if no temporary directory is set and it is not possible to create one
-     *
-     * @return string
      */
     public function getRuntimeDir(): string
     {
@@ -636,8 +656,6 @@ class Configuration
      *
      * Defaults to `/history` inside the shell's base config dir unless
      * explicitly overridden.
-     *
-     * @return string
      */
     public function getHistoryFile(): string
     {
@@ -806,8 +824,6 @@ class Configuration
      * Get the appropriate Readline implementation class name.
      *
      * @see self::getReadline
-     *
-     * @return string
      */
     private function getReadlineClass(): string
     {
@@ -816,9 +832,11 @@ class Configuration
                 return Readline\GNUReadline::class;
             } elseif (Readline\Libedit::isSupported()) {
                 return Readline\Libedit::class;
-            } elseif (Readline\HoaConsole::isSupported()) {
-                return Readline\HoaConsole::class;
             }
+        }
+
+        if (Readline\Userland::isSupported()) {
+            return Readline\Userland::class;
         }
 
         return Readline\Transient::class;
@@ -891,7 +909,17 @@ class Configuration
      */
     public function usePcntl(): bool
     {
-        return isset($this->usePcntl) ? ($this->hasPcntl && $this->usePcntl) : $this->hasPcntl;
+        if (!isset($this->usePcntl)) {
+            // Unless pcntl is explicitly *enabled*, don't use it while XDebug is debugging.
+            // See https://github.com/bobthecow/psysh/issues/742
+            if (\function_exists('xdebug_is_debugger_active') && \xdebug_is_debugger_active()) {
+                return false;
+            }
+
+            return $this->hasPcntl;
+        }
+
+        return $this->hasPcntl && $this->usePcntl;
     }
 
     /**
@@ -935,12 +963,26 @@ class Configuration
      * By default, PsySH will automatically insert semicolons at the end of
      * statements if they're missing. To strictly require semicolons, set
      * `requireSemicolons` to true.
-     *
-     * @return bool
      */
     public function requireSemicolons(): bool
     {
         return $this->requireSemicolons;
+    }
+
+    /**
+     * Enable or disable strict types enforcement.
+     */
+    public function setStrictTypes($strictTypes)
+    {
+        $this->strictTypes = (bool) $strictTypes;
+    }
+
+    /**
+     * Check whether to enforce strict types.
+     */
+    public function strictTypes(): bool
+    {
+        return $this->strictTypes;
     }
 
     /**
@@ -961,8 +1003,6 @@ class Configuration
      *
      * Note that this does not disable Unicode output in general, it just makes
      * it so PsySH won't output any itself.
-     *
-     * @return bool
      */
     public function useUnicode(): bool
     {
@@ -997,8 +1037,6 @@ class Configuration
      * level.
      *
      *     http://php.net/manual/en/function.error-reporting.php
-     *
-     * @return int
      */
     public function errorLoggingLevel(): int
     {
@@ -1019,13 +1057,11 @@ class Configuration
      * Get a CodeCleaner service instance.
      *
      * If none has been explicitly defined, this will create a new instance.
-     *
-     * @return CodeCleaner
      */
     public function getCodeCleaner(): CodeCleaner
     {
         if (!isset($this->cleaner)) {
-            $this->cleaner = new CodeCleaner(null, null, null, $this->yolo());
+            $this->cleaner = new CodeCleaner(null, null, null, $this->yolo(), $this->strictTypes());
         }
 
         return $this->cleaner;
@@ -1066,6 +1102,8 @@ class Configuration
      */
     public function setTabCompletion(bool $useTabCompletion)
     {
+        @\trigger_error('`setTabCompletion` is deprecated; call `setUseTabCompletion` instead.', \E_USER_DEPRECATED);
+
         $this->setUseTabCompletion($useTabCompletion);
     }
 
@@ -1084,11 +1122,11 @@ class Configuration
 
     /**
      * @deprecated Call `useTabCompletion` instead
-     *
-     * @return bool
      */
     public function getTabCompletion(): bool
     {
+        @\trigger_error('`getTabCompletion` is deprecated; call `useTabCompletion` instead.', \E_USER_DEPRECATED);
+
         return $this->useTabCompletion();
     }
 
@@ -1101,6 +1139,11 @@ class Configuration
     {
         $this->output = $output;
         $this->pipedOutput = null; // Reset cached pipe info
+
+        if (isset($this->theme)) {
+            $output->setTheme($this->theme);
+        }
+
         $this->applyFormatterStyles();
     }
 
@@ -1112,8 +1155,6 @@ class Configuration
      *
      * @see self::verbosity
      * @see self::getPager
-     *
-     * @return ShellOutput
      */
     public function getOutput(): ShellOutput
     {
@@ -1122,7 +1163,8 @@ class Configuration
                 $this->getOutputVerbosity(),
                 null,
                 null,
-                $this->getPager()
+                $this->getPager() ?: null,
+                $this->theme()
             ));
 
             // This is racy because `getOutputDecorated` needs access to the
@@ -1145,29 +1187,29 @@ class Configuration
     public function getOutputDecorated()
     {
         switch ($this->colorMode()) {
-            case self::COLOR_MODE_AUTO:
-                return $this->outputIsPiped() ? false : null;
             case self::COLOR_MODE_FORCED:
                 return true;
             case self::COLOR_MODE_DISABLED:
                 return false;
+            case self::COLOR_MODE_AUTO:
+            default:
+                return $this->outputIsPiped() ? false : null;
         }
     }
 
     /**
      * Get the interactive setting for shell input.
-     *
-     * @return bool
      */
     public function getInputInteractive(): bool
     {
         switch ($this->interactiveMode()) {
-            case self::INTERACTIVE_MODE_AUTO:
-                return !$this->inputIsPiped();
             case self::INTERACTIVE_MODE_FORCED:
                 return true;
             case self::INTERACTIVE_MODE_DISABLED:
                 return false;
+            case self::INTERACTIVE_MODE_AUTO:
+            default:
+                return !$this->inputIsPiped();
         }
     }
 
@@ -1177,13 +1219,19 @@ class Configuration
      * If a string is supplied, a ProcOutputPager will be used which shells out
      * to the specified command.
      *
+     * `cat` is special-cased to use the PassthruPager directly.
+     *
      * @throws \InvalidArgumentException if $pager is not a string or OutputPager instance
      *
-     * @param string|OutputPager $pager
+     * @param string|OutputPager|false $pager
      */
     public function setPager($pager)
     {
-        if ($pager && !\is_string($pager) && !$pager instanceof OutputPager) {
+        if ($pager === null || $pager === false || $pager === 'cat') {
+            $pager = false;
+        }
+
+        if ($pager !== false && !\is_string($pager) && !$pager instanceof OutputPager) {
             throw new \InvalidArgumentException('Unexpected pager instance');
         }
 
@@ -1196,17 +1244,31 @@ class Configuration
      * If no Pager has been explicitly provided, and Pcntl is available, this
      * will default to `cli.pager` ini value, falling back to `which less`.
      *
-     * @return string|OutputPager
+     * @return string|OutputPager|false
      */
     public function getPager()
     {
         if (!isset($this->pager) && $this->usePcntl()) {
+            if (\getenv('TERM') === 'dumb') {
+                return false;
+            }
+
             if ($pager = \ini_get('cli.pager')) {
                 // use the default pager
                 $this->pager = $pager;
-            } elseif ($less = \exec('which less 2>/dev/null')) {
+            } elseif ($less = $this->configPaths->which('less')) {
                 // check for the presence of less...
-                $this->pager = $less.' -R -S -F -X';
+
+                // n.b. The busybox less implementation is a bit broken, so
+                // let's not use it by default.
+                //
+                // See https://github.com/bobthecow/psysh/issues/778
+                $link = @\readlink($less);
+                if ($link !== false && \strpos($link, 'busybox') !== false) {
+                    return false;
+                }
+
+                $this->pager = $less.' -R -F -X';
             }
         }
 
@@ -1225,8 +1287,6 @@ class Configuration
 
     /**
      * Get an AutoCompleter service instance.
-     *
-     * @return AutoCompleter
      */
     public function getAutoCompleter(): AutoCompleter
     {
@@ -1239,11 +1299,11 @@ class Configuration
 
     /**
      * @deprecated Nothing should be using this anymore
-     *
-     * @return array
      */
     public function getTabCompletionMatchers(): array
     {
+        @\trigger_error('`getTabCompletionMatchers` is no longer used.', \E_USER_DEPRECATED);
+
         return [];
     }
 
@@ -1284,6 +1344,8 @@ class Configuration
      */
     public function addTabCompletionMatchers(array $matchers)
     {
+        @\trigger_error('`addTabCompletionMatchers` is deprecated; call `addMatchers` instead.', \E_USER_DEPRECATED);
+
         $this->addMatchers($matchers);
     }
 
@@ -1401,8 +1463,6 @@ class Configuration
 
     /**
      * Get the Presenter service.
-     *
-     * @return Presenter
      */
     public function getPresenter(): Presenter
     {
@@ -1434,8 +1494,6 @@ class Configuration
      * are found.
      *
      * This will default to true in a future release, but is false for now.
-     *
-     * @return bool
      */
     public function warnOnMultipleConfigs(): bool
     {
@@ -1444,6 +1502,8 @@ class Configuration
 
     /**
      * Set the current color mode.
+     *
+     * @throws \InvalidArgumentException if the color mode isn't auto, forced or disabled
      *
      * @param string $colorMode
      */
@@ -1464,8 +1524,6 @@ class Configuration
 
     /**
      * Get the current color mode.
-     *
-     * @return string
      */
     public function colorMode(): string
     {
@@ -1496,8 +1554,6 @@ class Configuration
 
     /**
      * Get the current interactive mode.
-     *
-     * @return string
      */
     public function interactiveMode(): string
     {
@@ -1518,8 +1574,6 @@ class Configuration
      * Get an update checker service instance.
      *
      * If none has been explicitly defined, this will create a new instance.
-     *
-     * @return Checker
      */
     public function getChecker(): Checker
     {
@@ -1555,8 +1609,6 @@ class Configuration
      *
      * One of 'always', 'daily', 'weekly', 'monthly' or 'never'. If none is
      * explicitly set, default to 'weekly'.
-     *
-     * @return string
      */
     public function getUpdateCheck(): string
     {
@@ -1620,11 +1672,19 @@ class Configuration
     /**
      * Set the prompt.
      *
-     * @param string $prompt
+     * @deprecated The `prompt` configuration has been replaced by Themes and support will
+     * eventually be removed. In the meantime, prompt is applied first by the Theme, then overridden
+     * by any explicitly defined prompt.
+     *
+     * Note that providing a prompt but not a theme config will implicitly use the `classic` theme.
      */
     public function setPrompt(string $prompt)
     {
         $this->prompt = $prompt;
+
+        if (isset($this->theme)) {
+            $this->theme->setPrompt($prompt);
+        }
     }
 
     /**
@@ -1639,8 +1699,6 @@ class Configuration
 
     /**
      * Get the force array indexes.
-     *
-     * @return bool
      */
     public function forceArrayIndexes(): bool
     {
@@ -1658,6 +1716,46 @@ class Configuration
     }
 
     /**
+     * Set the current output Theme.
+     *
+     * @param Theme|string|array $theme Theme (or Theme config)
+     */
+    public function setTheme($theme)
+    {
+        if (!$theme instanceof Theme) {
+            $theme = new Theme($theme);
+        }
+
+        $this->theme = $theme;
+
+        if (isset($this->prompt)) {
+            $this->theme->setPrompt($this->prompt);
+        }
+
+        if (isset($this->output)) {
+            $this->output->setTheme($theme);
+            $this->applyFormatterStyles();
+        }
+    }
+
+    /**
+     * Get the current output Theme.
+     */
+    public function theme(): Theme
+    {
+        if (!isset($this->theme)) {
+            // If a prompt is explicitly set, and a theme is not, base it on the `classic` theme.
+            $this->theme = $this->prompt ? new Theme('classic') : new Theme();
+        }
+
+        if (isset($this->prompt)) {
+            $this->theme->setPrompt($this->prompt);
+        }
+
+        return $this->theme;
+    }
+
+    /**
      * Set the shell output formatter styles.
      *
      * Accepts a map from style name to [fg, bg, options], for example:
@@ -1669,15 +1767,14 @@ class Configuration
      *
      * Foreground, background or options can be null, or even omitted entirely.
      *
-     * @see ShellOutput::initFormatters
-     *
-     * @param array $formatterStyles
+     * @deprecated The `formatterStyles` configuration has been replaced by Themes and support will
+     * eventually be removed. In the meantime, styles are applied first by the Theme, then
+     * overridden by any explicitly defined formatter styles.
      */
     public function setFormatterStyles(array $formatterStyles)
     {
         foreach ($formatterStyles as $name => $style) {
-            list($fg, $bg, $opts) = \array_pad($style, 3, null);
-            $this->formatterStyles[$name] = new OutputFormatterStyle($fg ?: null, $bg ?: null, $opts ?: []);
+            $this->formatterStyles[$name] = new OutputFormatterStyle(...$style);
         }
 
         if (isset($this->output)) {
@@ -1690,6 +1787,10 @@ class Configuration
      *
      * This is called on initialization of the shell output, and again if the
      * formatter styles config is updated.
+     *
+     * @deprecated The `formatterStyles` configuration has been replaced by Themes and support will
+     * eventually be removed. In the meantime, styles are applied first by the Theme, then
+     * overridden by any explicitly defined formatter styles.
      */
     private function applyFormatterStyles()
     {
@@ -1697,12 +1798,17 @@ class Configuration
         foreach ($this->formatterStyles as $name => $style) {
             $formatter->setStyle($name, $style);
         }
+
+        $errorFormatter = $this->output->getErrorOutput()->getFormatter();
+        foreach (Theme::ERROR_STYLES as $name) {
+            if (isset($this->formatterStyles[$name])) {
+                $errorFormatter->setStyle($name, $this->formatterStyles[$name]);
+            }
+        }
     }
 
     /**
      * Get the configured output verbosity.
-     *
-     * @return string
      */
     public function verbosity(): string
     {
@@ -1765,13 +1871,11 @@ class Configuration
      * Guess whether stdin is piped.
      *
      * This is mostly useful for deciding whether to use non-interactive mode.
-     *
-     * @return bool
      */
     public function inputIsPiped(): bool
     {
         if ($this->pipedInput === null) {
-            $this->pipedInput = \defined('STDIN') && static::looksLikeAPipe(\STDIN);
+            $this->pipedInput = \defined('STDIN') && self::looksLikeAPipe(\STDIN);
         }
 
         return $this->pipedInput;
@@ -1781,13 +1885,11 @@ class Configuration
      * Guess whether shell output is piped.
      *
      * This is mostly useful for deciding whether to use non-decorated output.
-     *
-     * @return bool
      */
     public function outputIsPiped(): bool
     {
         if ($this->pipedOutput === null) {
-            $this->pipedOutput = static::looksLikeAPipe($this->getOutput()->getStream());
+            $this->pipedOutput = self::looksLikeAPipe($this->getOutput()->getStream());
         }
 
         return $this->pipedOutput;
@@ -1797,8 +1899,6 @@ class Configuration
      * Guess whether an input or output stream is piped.
      *
      * @param resource|int $stream
-     *
-     * @return bool
      */
     private static function looksLikeAPipe($stream): bool
     {
